@@ -1,0 +1,119 @@
+<h1 name="top">商家分店管理介面</h1>
+<div ng-controller = "op-storeDetail-control">
+	<div><select ng-model="storeDetails" ng-options="a.name for a in details" ng-change="selectStore()">
+	</select>
+</div>
+<div>
+	<button type = "button" class="btn btn-primary" ng-click="createForm()" style="margin-bottom:10px">新增</button>  
+</div>
+	<div id="createForm" class="panel panel-default">    
+    <div class="panel-heading">{{isCreate?'新增商店類別':'修改商店類別'}}</div>    
+    <form>
+      <table class="table">
+        <tr>
+          <td>storeid</td>
+          <td>
+            <input type = "text" ng-model="Store.storeid" readonly>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            name
+          </td>
+          <td>
+            <input type = "text" id="name" ng-model="Store.name">
+          </td>
+        </tr>
+
+
+        <tr>
+          <td>address</td>
+          <td>
+            <input 
+              type="text" 
+              ng-model="Store.address">
+          </td>
+        </tr>
+
+        <tr>
+          <td>number</td>
+          <td>
+            <input type= "text" ng-model="Store.number"/>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            image
+          </td>
+          <td>
+            <img style="width:100; height=100" id="preview" ng-hide="!Store.image" style="width:100; height=100" ng-src="{{Store.image}}"/>
+            <input 
+              type="file" 
+              id="fileUpload" 
+              ng-file-select="{name:'image'}"
+              accept="image/*" 
+              style="display: none;"
+              />
+            <button id='btn-upload'>選擇圖檔</button>
+            <label id="showFilename"></label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            detail
+          </td>
+          <td>
+            <img style="width:100; height=100" id="preview" ng-hide="!Store.detail" style="width:100; height=100" ng-src="{{Store.detail}}"/>
+            <input 
+              type="file" 
+              id="fileUpload1" 
+              ng-file-select="{name:'detail'}"
+              accept="image/*" 
+              style="display: none;"/>
+            <button id='btn-upload1'>選擇圖檔</button>
+            <label id="showFilename1"></label>
+          </td>
+        </tr>
+
+
+        <tr>
+          <td colspan="2">
+            <button class="btn btn-warning"  ng-click="submita()">Submit</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">商店類別</div> 
+    <table class="table">      
+      <tbody>
+        <tr>
+          <th>STORED</th>
+          <th>商店名稱</th>
+          <th>地址</th>
+          <th>電話</th>
+          <th>圖片</th>
+          <th>詳細資訊</th>
+          
+        </tr>
+        <tr ng-repeat = "store in stores | orderBy:'+rank':reverse">
+          <td>{{store.storeid}}</td>
+          <td>{{store.name}}</td>
+          <td>{{store.address}}</td>
+          <td>{{store.number}}</td>
+          <td><img ng-src="{{store.image}}" style="width:100; height=100"></td>
+          <td><img ng-src="{{store.detail}}" style="width:150; height=150"></td>
+          <td><button type = "button" class="btn btn-primary" ng-click="dataUpdate(store.storeid)">更新</button></td>
+
+        </tr>
+      </tbody> 
+    </table>
+  </div>
+  
+
+</div>

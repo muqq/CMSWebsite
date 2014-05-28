@@ -1,0 +1,26 @@
+
+	<div class="navbar navbar-fixed-top navbar-inverse" role="navigation" ng-controller="op-nav-control">
+		<div class="container">
+		<ul class="nav navbar-nav">
+			<li class="dropdown">
+				<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">Dashboard</a>
+				<ul class="dropdown-menu">
+					<li><a ng-click="onNav('/Dashboard')" href="javascript:void(0);">Stores Dashboard</a></li>
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">Store Management</a>  		
+				<ul class="dropdown-menu">
+					<li><a ng-click="onNav('/StoreManagement')" href="javascript:void(0);">Store管理</a></li>
+					<li><a ng-click="onNav('/StoreManagementDetail')" href="javascript:void(0);">Store分店管理</a></li>
+				</ul>
+			</li>
+			<li class="dropdown">
+				<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">Customer management</a>  
+				<ul class="dropdown-menu">
+					<li><a ng-click="onNav('/CustomerManagement')" href="javascript:void(0);">Customer管理</a></li>
+				</ul>
+			</li>    
+		</ul>
+	</div>
+	</div>

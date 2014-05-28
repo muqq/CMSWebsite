@@ -1,0 +1,113 @@
+<h1 name="top">商店管理介面</h1>
+<div ng-controller = "op-store-control">
+  <button type = "button" class="btn btn-primary" ng-click="createForm()" style="margin-bottom:10px">新增</button>  
+  <div id="createForm" class="panel panel-default">    
+    <div class="panel-heading">{{isCreate?'新增商店類別':'修改商店類別'}}</div>    
+    <form>
+      <table class="table">
+        <tr ng-hide="isCreate">
+          <td>storeid</td>
+          <td>
+            <input type = "text" ng-model="Store.storeid" readonly>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            name
+          </td>
+          <td>
+            <input type = "text" ng-model="Store.name" >
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            icon
+          </td>
+          <td>
+            <img style="width:100; height=100" id="preview" ng-hide="!Store.icon" style="width:100; height=100" ng-src="{{Store.icon}}"/>
+            <input 
+              type="file" 
+              ng-model="input" 
+              id="fileUpload" 
+              ng-file-select="{name:'icon'}"
+              accept="image/*" 
+              style="display: none;"/>
+            <button id='btn-upload'>選擇圖檔</button>
+            <label id="showFilename"></label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>category</td>
+          <td>
+            <input 
+              type="text" 
+              ng-model="Store.category">
+          </td>
+        </tr>
+
+        <tr>
+          <td>discount</td>
+          <td>
+            <input type= "text" ng-model="Store.discount"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            account
+          </td>
+          <td>
+            <input type = "text" id='account' ng-model="Store.account" >
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+            password
+          </td>
+          <td>
+            <input type = "text" ng-model="Store.password" >
+          </td>
+        </tr>
+
+        <tr>
+          <td colspan="2">
+            <button class="btn btn-warning"  ng-click="submita()">Submit</button>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">商店類別</div> 
+    <table class="table">      
+      <tbody>
+        <tr>
+          <th>STORED</th>
+          <th>商店名稱</th>
+          <th>商店圖示</th>
+          <th>折扣</th>
+          <th>類別</th>
+          <th>帳號</th>
+          <th>密碼</th>
+        </tr>
+        <tr ng-repeat = "store in stores | orderBy:'+rank':reverse">
+          <td>{{store.storeid}}</td>
+          <td>{{store.name}}</td>
+          <td><img ng-src="{{store.icon}}" style="width:100; height=100"></td>
+          <td>{{store.discount}}</td>
+          <td>{{store.category}}</td>
+          <td>{{store.account}}</td>
+          <td>{{store.password}}</td>
+          <td><button type = "button" class="btn btn-primary" ng-click="dataUpdate(store.storeid)">更新</button></td>
+
+        </tr>
+      </tbody> 
+    </table>
+  </div>
+  
+
+</div>
