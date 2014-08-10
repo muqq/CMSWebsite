@@ -38,6 +38,7 @@ app.get('/', routes.index);
 
 app.get('/StoreManagement', routes.StoreManagement);
 app.get('/StoreManagementDetail', routes.StoreManagementDetail);
+app.get('/NewsPage', routes.NewsPage);
 /*
 app.get('/RTDashboard', routes.RTDashboard);
 app.get('/RTRank', routes.RTRank);

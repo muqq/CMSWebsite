@@ -58,7 +58,7 @@ opControllers.controller('op-store-control', ['$scope', '$http','$fileUploader',
                 $scope.$apply(function() {
                     checkItem($scope, "fileItem");
                     $scope.fileItem = item;
-                    $scope.fileItem.url = apiServer + 'UploadImage?s3Path=icon/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
+                    $scope.fileItem.url = apiServer + 'UploadImage?s3Path=store/icon/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
                     console.log($scope.fileItem.url);
                     $scope.Store.icon = event.target.result;
                 });
@@ -187,13 +187,13 @@ opControllers.controller('op-storeDetail-control', ['$scope', '$http','$fileUplo
                     if (item.name =="image"){
                         checkItem($scope, "imageItem");
                         $scope.imageItem = item;
-                        $scope.imageItem.url = apiServer + 'UploadImage?s3Path=image/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
+                        $scope.imageItem.url = apiServer + 'UploadImage?s3Path=store/image/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
                         console.log($scope.imageItem.url);
                         $scope.Store.image = event.target.result;
                     }else{
                         checkItem($scope, "detailItem");
                         $scope.detailItem = item;
-                        $scope.detailItem.url = apiServer + 'UploadImage?s3Path=detail/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
+                        $scope.detailItem.url = apiServer + 'UploadImage?s3Path=store/detail/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
                         console.log($scope.detailItem.url);
                         $scope.Store.detail = event.target.result;
                     }
@@ -278,6 +278,115 @@ opControllers.controller('op-storeDetail-control', ['$scope', '$http','$fileUplo
 
     }
 ]);
+
+opControllers.controller('op-news-control', ['$scope', '$http','$fileUploader', '$model',
+    function($scope, $http, $fileUploader, $model) {
+        var fetchNews = function(){
+            $model.RaymnWebsite.fetchNews(function(err, res){
+            if (err) alert(err);
+            else {
+                $scope.newsList = res ;
+            }
+            });
+        }
+
+        var uploader = $scope.uploader = $fileUploader.create({
+            scope: $scope,          // to automatically update the html. Default: $rootScope
+            //'/uploadProduct',
+        });
+
+        uploader.bind('afteraddingfile', function (event, item) {
+            console.log(item);
+            var reader = new FileReader();
+            reader.onload = onLoadFile ;
+            reader.readAsDataURL(item.file);
+            function onLoadFile(event){
+                $scope.$apply(function() {
+                    checkItem($scope, "fileItem");
+                    $scope.fileItem = item;
+                    $scope.fileItem.url = apiServer + 'UploadImage?s3Path=NewsImage/&contentType=' + item.file.type +'&fileExtension=' + item.file.type.replace('image/','.');
+                    console.log($scope.fileItem.url);
+                    $scope.News.image = event.target.result;
+                });
+            }
+        });  
+
+        uploader.bind('complete', function (event, xhr, item, response) {
+            console.log(response);
+            response.url = response.url.replace(/"/g,'') ;
+            var url = apiServer + ($scope.isCreate ? 'CreateNews' : 'UpdateNews'); 
+            $scope.News.image = response.url ;
+            postData(url);
+        });
+
+        function postData(url) {
+            console.log($scope.News);
+            $model.postData(url, $scope.News, config, function(err, res){
+                if(err) errorAlert(err);
+                else{
+                    fetchNews();
+                    alert(res);
+                }
+            });
+        } 
+
+        $scope.submita = function(){
+            if (!checkNews($scope.News)) errorAlert('請輸入完整');
+            else{
+                if ($scope.fileItem.file) {        
+                    $scope.fileItem.upload();
+                }
+                else {
+                    postData(apiServer +'UpdateNews');
+                }     
+            }
+        }
+
+        $scope.dataUpdate = function(newsid){
+            $scope.isCreate = false ;
+            checkItem($scope, "fileItem");
+            $('#showFilename').text("");
+            var findArray = _.findIndex($scope.newsList, {'newsid':newsid});
+            $scope.News = _.clone($scope.newsList[findArray]);
+            window.location.href = '#top';
+        }
+
+        $scope.createForm = function(){
+            $scope.isCreate = true ;
+            checkItem($scope, "fileItem");
+            $scope.News = {}; 
+            $('#showFilename').text("");
+        }
+
+        $scope.DeleteNews = function(newsid){
+            var obj = {
+                newsid : newsid
+            }
+            $model.RaymnWebsite.deleteNews(obj, function(err, res){
+                if(err) alert(err);
+                else {
+                    fetchNews();
+                    alert(res);
+                }
+            });
+            
+        }
+
+        fetchNews() ;
+        $scope.isCreate = true ;
+        $scope.fileItem = {};
+        $scope.News = {};
+        $('#btn-upload').click(function(e){
+            e.preventDefault();
+            $('#fileUpload').click();
+        });
+        $('#fileUpload').on('change',function(){
+            var filename = $(this).val();
+            $('#showFilename').text(filename);
+        });
+    }
+]);
+
 //http config
 var config = {
     headers: {
@@ -297,6 +406,17 @@ var checkItem = function(obj, key){
       obj[key] = {} ;
     }
   }
+}
+
+//check Category input
+var checkNews = function(data){
+  console.log(data);
+  if(!data.title) return false ;
+  if(!data.category) return false ;  
+  if(!data.image) return false ;
+  if(!data.content) return false ;
+  if(!data.date) return false ;
+  return true ;
 }
 
 //check Category input
@@ -343,6 +463,24 @@ var checkNumber = function(item){
 
 opControllers.factory('$model' , function($http){
     return {
+        RaymnWebsite : {
+            fetchNews : function(callback){
+                $http.get(apiServer + 'GetNews', config).success(function(resp){
+                    if(resp.error) callback(resp.error);
+                    else callback(null, resp);
+                }).error(function(err){
+                    callback(err);
+                });
+            },
+            deleteNews : function(Obj, callback){
+                $http.post(apiServer + 'DeleteNews', Obj, config).success(function(resp){
+                    if(resp.error) callback(resp.error);
+                    else callback(null, resp);
+                }).error(function(err){
+                    callback(err);
+                });
+            }
+        },
         Store : {
             fetchStores : function(callback){           
                 $http.get(apiServer + 'ListStores', config).success(function(resp){

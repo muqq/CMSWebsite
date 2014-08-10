@@ -50,3 +50,6 @@ exports.StoreManagement = function(req, res) {
 exports.StoreManagementDetail = function(req, res) {
     res.render('layout', {title: title, content:'StoreManagementDetail'});
 };
+exports.NewsPage = function(req, res) {
+    res.render('layout', {title: title, content:'NewsPage'});
+};
