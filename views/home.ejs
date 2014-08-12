@@ -1,11 +1,10 @@
 <h1>Muqq Operation Platform</h1>
 <div ng-controller="op-home-control">
-  <div id="user-status" style="display:none">
+  <div id="user-status">
     <h2>Account : {{userid}} </h2>
-    <h2>Role : {{role}} </h2>
   </div>
-  <div id="login" style="display:none">
-    <input ng-model="userid" placeholder="email" />
+  <div id="login" style=>
+    <input ng-model="account" placeholder="account" />
     <input ng-model="password" placeholder="password" />
     <button class="btn btn-primary" ng-click="login()">Login</button>
   </div>

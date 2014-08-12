@@ -14,8 +14,11 @@ var opControllers = angular.module('opControllers', []);
 
 
 // Nav controller
-opControllers.controller('op-nav-control', ['$scope', 
-    function($scope) {
+opControllers.controller('op-nav-control', ['$scope', 'sessionService', 
+    function($scope, sessionService) {
+        $scope.$on('sessionService', function () {
+            console.log(sessionService.session);
+        });
         $scope.onNav = function(path) {
             window.location.href = path;
         }
@@ -23,9 +26,16 @@ opControllers.controller('op-nav-control', ['$scope',
 ]);
 
 
-opControllers.controller('op-home-control', ['$scope', '$http',
-    function($scope, $http) {
-
+opControllers.controller('op-home-control', ['$scope', '$http', 'sessionService', '$model',
+    function($scope, $http, sessionService, $model) {
+        $model.RaymnWebsite.sessionCheck(function(err, res){
+            if (err) alert(err);
+            else {
+                console.log(res);
+            }
+        });
+        var test = true; 
+        sessionService.writeSession(test);
     }
 ]);
 
@@ -461,6 +471,18 @@ var checkNumber = function(item){
         return true; 
 }
 
+opControllers.factory('sessionService', function($rootScope) {
+    var sessionObj = {
+        session : null,
+        writeSession: function(bool){
+            this.session = bool ;
+            $rootScope.$broadcast('sessionService');
+            console.log(this.session);
+        }
+    }
+    return sessionObj ;
+});
+
 opControllers.factory('$model' , function($http){
     return {
         RaymnWebsite : {
@@ -479,7 +501,15 @@ opControllers.factory('$model' , function($http){
                 }).error(function(err){
                     callback(err);
                 });
-            }
+            },
+            sessionCheck : function(callback){
+                $http.post(apiServer + 'SessionCheck', config).success(function(resp){
+                    if(resp.error) callback(resp.error);
+                    else callback(null, resp);
+                }).error(function(err){
+                    callback(err);
+                });
+            },
         },
         Store : {
             fetchStores : function(callback){           
