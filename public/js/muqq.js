@@ -1,6 +1,6 @@
 'use strict';
 
-var apiServer = 'http://54.199.238.145:8080/api/'; // Staging
+var apiServer = 'http://op.raymn.com.tw:8080/api/'; // Staging
 
 var opApp = angular.module('opApp', [
     'angularFileUpload',
@@ -12,12 +12,19 @@ var opApp = angular.module('opApp', [
 
 var opControllers = angular.module('opControllers', []);
 
-
 // Nav controller
 opControllers.controller('op-nav-control', ['$scope', 'sessionService', 
     function($scope, sessionService) {
         $scope.$on('sessionService', function () {
-            console.log(sessionService.session);
+            if(sessionService.session){
+                $('.navbar-nav').attr('style', 'display:block');
+                $('#account').html('Account: Admin');
+                console.log('cookie success');
+            }else{
+                $('.navbar-nav').attr('style', 'display:none');
+                $('#account').html('');
+                console.log('cookie not success');
+            }
         });
         $scope.onNav = function(path) {
             window.location.href = path;
@@ -28,14 +35,33 @@ opControllers.controller('op-nav-control', ['$scope', 'sessionService',
 
 opControllers.controller('op-home-control', ['$scope', '$http', 'sessionService', '$model',
     function($scope, $http, sessionService, $model) {
+        var checkSession = false ;
         $model.RaymnWebsite.sessionCheck(function(err, res){
             if (err) alert(err);
             else {
-                console.log(res);
+                console.log(res.status);
+                if (res.status == 'no session'){
+                    checkSession = false ;
+                }else {
+                    checkSession = true ;
+                }
+                sessionService.writeSession(checkSession);
             }
         });
-        var test = true; 
-        sessionService.writeSession(test);
+        console.log(checkSession);
+        $scope.login = function(){
+            var userData = {
+                account : $scope.account,
+                password : $scope.password
+            }
+            $model.RaymnWebsite.Login(userData, function(err, res){
+                if(err) alert(err);
+                else {
+                    checkSession = true ;
+                    sessionService.writeSession(checkSession);
+                }
+            });
+        }
     }
 ]);
 
@@ -402,7 +428,8 @@ var config = {
     headers: {
         'Content-Type' : 'application/json',
         'Authorization': 'Basic ZWExMzVkZGIzZGZhNTY0NDMzMGRmYTEwN2FmZjgxNjE=',
-    }
+    },
+    withCredentials : true 
 }
 //error alert
 var errorAlert = function(err){
@@ -477,7 +504,6 @@ opControllers.factory('sessionService', function($rootScope) {
         writeSession: function(bool){
             this.session = bool ;
             $rootScope.$broadcast('sessionService');
-            console.log(this.session);
         }
     }
     return sessionObj ;
@@ -503,13 +529,21 @@ opControllers.factory('$model' , function($http){
                 });
             },
             sessionCheck : function(callback){
-                $http.post(apiServer + 'SessionCheck', config).success(function(resp){
+                $http.get(apiServer + 'SessionCheck', config).success(function(resp){
                     if(resp.error) callback(resp.error);
                     else callback(null, resp);
                 }).error(function(err){
                     callback(err);
                 });
             },
+            Login : function(data, callback){
+                    $http.post(apiServer + 'CMSLogin', data, config).success(function(resp){
+                    if(resp.error) callback(resp.error);
+                    else callback(null, resp);
+                }).error(function(err){
+                    callback(err);
+                });
+            }
         },
         Store : {
             fetchStores : function(callback){           
