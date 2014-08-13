@@ -67,6 +67,18 @@ opControllers.controller('op-home-control', ['$scope', '$http', 'sessionService'
 
 opControllers.controller('op-store-control', ['$scope', '$http','$fileUploader', '$model',
     function($scope, $http, $fileUploader, $model) {
+        //checkSession
+        $model.RaymnWebsite.sessionCheck(function(err, res){
+            if (err) alert(err);
+            else {
+                console.log(res.status);
+                if (res.status == 'no session'){
+                    window.location.href = '/';
+                }else {
+                    
+                }
+            }
+        });
         var fetchStores = function(){
             $model.Store.fetchStores(function(err, data){
                 if(err) errorAlert(err);
@@ -165,6 +177,18 @@ opControllers.controller('op-store-control', ['$scope', '$http','$fileUploader',
 ]);
 opControllers.controller('op-storeDetail-control', ['$scope', '$http','$fileUploader', '$model',
     function($scope, $http, $fileUploader, $model) {
+        //checkSession
+        $model.RaymnWebsite.sessionCheck(function(err, res){
+            if (err) alert(err);
+            else {
+                console.log(res.status);
+                if (res.status == 'no session'){
+                    window.location.href = '/';
+                }else {
+                    
+                }
+            }
+        });
         var fetchStores = function(){
             $model.Store.fetchStores(function(err, data){
                 if(err) errorAlert(err);
@@ -317,6 +341,18 @@ opControllers.controller('op-storeDetail-control', ['$scope', '$http','$fileUplo
 
 opControllers.controller('op-news-control', ['$scope', '$http','$fileUploader', '$model',
     function($scope, $http, $fileUploader, $model) {
+        //checkSession
+        $model.RaymnWebsite.sessionCheck(function(err, res){
+            if (err) alert(err);
+            else {
+                console.log(res.status);
+                if (res.status == 'no session'){
+                    window.location.href = '/';
+                }else {
+                    
+                }
+            }
+        });
         var fetchNews = function(){
             $model.RaymnWebsite.fetchNews(function(err, res){
             if (err) alert(err);
