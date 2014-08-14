@@ -13,8 +13,8 @@ var opApp = angular.module('opApp', [
 var opControllers = angular.module('opControllers', []);
 
 // Nav controller
-opControllers.controller('op-nav-control', ['$scope', 'sessionService', 
-    function($scope, sessionService) {
+opControllers.controller('op-nav-control', ['$scope', 'sessionService', '$model',
+    function($scope, sessionService, $model) {
         $scope.$on('sessionService', function () {
             if(sessionService.session){
                 $('.navbar-nav').attr('style', 'display:block');
@@ -28,6 +28,14 @@ opControllers.controller('op-nav-control', ['$scope', 'sessionService',
         });
         $scope.onNav = function(path) {
             window.location.href = path;
+        }
+        $scope.logOut = function(){
+            $model.RaymnWebsite.Logout(function(err, res){
+                if(err) alert(err);
+                else{
+                    window.location.href = '/';
+                }
+            });
         }
     }
 ]);
@@ -573,7 +581,15 @@ opControllers.factory('$model' , function($http){
                 });
             },
             Login : function(data, callback){
-                    $http.post(apiServer + 'CMSLogin', data, config).success(function(resp){
+                $http.post(apiServer + 'CMSLogin', data, config).success(function(resp){
+                    if(resp.error) callback(resp.error);
+                    else callback(null, resp);
+                }).error(function(err){
+                    callback(err);
+                });
+            },
+            Logout: function(callback){
+                $http.get(apiServer + 'LogOut', config).success(function(resp){
                     if(resp.error) callback(resp.error);
                     else callback(null, resp);
                 }).error(function(err){
