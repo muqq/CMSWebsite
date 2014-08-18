@@ -50,12 +50,6 @@
         </tr>
 
         <tr>
-          <td>content</td>
-          <td>
-            <input type= "text" ng-model="News.content"/>
-          </td>
-        </tr>
-        <tr>
           <td>
             Year
           </td>
@@ -72,7 +66,12 @@
             <input type = "text" ng-model="News.date" >
           </td>
         </tr>
-
+        <tr>
+          <td>content</td>
+          <td>
+            <textarea ng-model="News.content"/>
+          </td>
+        </tr>
         <tr>
           <td colspan="2">
             <button class="btn btn-warning"  ng-click="submita()">Submit</button>
